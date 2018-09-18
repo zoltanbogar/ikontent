@@ -1,0 +1,30 @@
+.searchContainer {
+    display: block;
+}
+.searchContainer a {
+    display: flex;
+    clear: both;
+    color: #136CB2;
+    max-height: 100px;
+    overflow: hidden;
+    text-decoration: none;
+    padding: 16px;
+    border: 1px solid #c9c9c9;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-family: Campton-Light;
+    overflow-y: auto;
+}
+
+.searchContainer a:hover {
+    background-color: rgba(1, 158, 224, 0.25);
+}
+
+.show {
+    display: flex;
+}
+
+.hide {
+    display: none;
+}

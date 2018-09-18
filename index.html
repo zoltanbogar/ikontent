@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Ikontent</title>
+
+        <link rel="stylesheet" href="./css/bootstrap.css" />
+        <link rel="stylesheet" href="./css/bootstrap-grid.css" />
+        <link rel="stylesheet" href="./css/bootstrap-reboot.css" />
+        <link rel="stylesheet" href="./css/style.css" />
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid">
+                <div class="row w-100">
+                    <div class="col-sm-6">
+                        <a class="navbar-brand" href="#">Ikontent teszt feladat</a>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="w-100 searchContainer">
+                            <input class="form-control mr-sm-2 w-100 searchInput" type="search" placeholder="Search" aria-label="Search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+                integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+                crossorigin="anonymous"></script>
+    <script>
+        let url = 'http://www.omdbapi.com/?s=';
+        let apiKey = '&apikey=2785eab0';
+        let type = '&type=series';
+        let page = '&page=10';
+
+        $('.searchInput').on('keyup', function(obj){
+        	var searchedString = $('.searchInput').val();
+
+        	if(searchedString.length < 3){
+        		$('.searchContainer a').remove();
+            } else {
+				$.ajax({
+					type: "POST",
+					url: url + searchedString + apiKey + type + page,
+					data: ({}),
+					dataType: "json",
+					success: function(data){
+						$.each(data.Search, function(i,e){
+                            var content = '';
+                            var poster = '';
+
+                            if(e.imdbID){
+                            	let imdbID = e.imdbID;
+								$.ajax({
+									type: "POST",
+									url: 'http://www.omdbapi.com/?i=' + imdbID + apiKey + type + page,
+									data: ({}),
+									dataType: "json",
+									success: function(data){
+                                        console.log(data, data.Director);
+                                        let director = '<div class="row">' +
+											'               <div class="col-sm-12">' +
+                                            '                   Director: ' +
+											                    data.Director +
+											'               </div>' +
+											'           </div>';
+
+										let released = '<div class="row">' +
+											'               <div class="col-sm-12">' +
+											'                   Released at: ' +
+                                                                data.Released +
+											'               </div>' +
+											'           </div>';
+
+										let actors = '<div class="row">' +
+											'               <div class="col-sm-12">' +
+											'                   Actors: ' +
+											                    data.Actors +
+											'               </div>' +
+											'           </div>';
+
+										let plot = '<div class="row">' +
+											'               <div class="col-sm-12">' +
+											'                   Plot: ' +
+											                    data.Plot +
+											'               </div>' +
+											'           </div>';
+
+										$('.seriesData[seriesID="' + imdbID + '"]').append(director)
+                                            .append(released)
+                                            .append(actors)
+                                            .append(plot);
+
+									},
+									error: function(XMLHttpRequest, textStatus, errorThrown) {
+										console.log(XMLHttpRequest, textStatus, errorThrown);
+									}
+								});
+                            }
+
+                            if(e.Poster != "N/A") poster = '<img class="img-fluid" src="' + e.Poster + '" />';
+                            content += '<a href="https://www.imdb.com/title/' + e.imdbID + '/" target="_blank">' +
+                                        '   <div class="container">' +
+                                        '       <div class="row">' +
+                                        '           <div class="col-sm-2">' +
+								                        poster +
+                                        '           </div>   ' +
+                                        '           <div class="col-sm-10">' +
+								        '               <div class="container seriesData" seriesID="' + e.imdbID + '">' +
+                                        '                   <div class="row">' +
+                                        '                       <div class="col-sm-12">' +
+                                                                    e.Title +
+                                        '                       </div>'+
+                                        '                   </div>' +
+								        '               </div>' +
+                                        '           </div>' +
+                                        '       </div>' +
+								        '   </div>'+
+                                        '</a>';
+							$('.searchInput').after(content);
+							$('.searchContainer a').addClass('show');
+                        });
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						console.log(XMLHttpRequest, textStatus, errorThrown);
+					}
+				});
+            }
+        });
+    </script>
+    </body>
+</html>
